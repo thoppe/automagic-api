@@ -48,6 +48,7 @@ d3.json(f_graph, function(error, json) {
         .enter().append("g")
         .attr("class", "node")
         .attr("selected",0)
+        .attr("name",function(d) {return d.name;})
         .call(force.drag);
 
     c1 = "#1f77b4"
@@ -64,13 +65,15 @@ d3.json(f_graph, function(error, json) {
     node.on("mouseout",  unhighlight_node);
     node.on("click", select_node);
 
+    console.log(json.links);
+
     path = svg.append("svg:g").selectAll("path")
         .data(force.links())
         .enter().append("svg:path")
+        .attr("source", function(d) { return d.source.name; })
+        .attr("target", function(d) { return d.target.name; })
         .attr("class", "link")
         .attr("marker-end", "url(#end-arrow)");
-
-
 });
 
 function select_node(d) {
