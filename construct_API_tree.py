@@ -22,11 +22,6 @@ def count_hash(name,tag,dinner):
     C = collections.Counter()
     for soup in dinner:
         for cx in soup.findAll(True,{tag:name}):
-            #try:
-            #    text = cx.html.find(text=True,recursive=False).strip()
-            #except:
-            #    text = None
-            
             C[cx] += 1
     return C
 
@@ -90,7 +85,8 @@ def load_samples(HTML_SAMPLES):
 
     for x in ITR_attribute('class',dinner):
         for cx in x["class"]:
-            TAGS['class'][cx] += 1
+            if cx:
+                TAGS['class'][cx] += 1
 
     #for x in ITR_attribute('id'):
     #    TAGS['id'][x["id"]] += 1
@@ -120,15 +116,20 @@ def build_graph(TAGS, dinner):
         for name in TAGS[tag]:
             G.add_node(name, name=name)
 
+    NAMES = set(nx.get_node_attributes(G,'name'))
+
     # Identify all the parents
     for tag in TAGS:
         for name in TAGS[tag]:
             parents = find_named_parents(name,tag,dinner)
+            bad_parents = [x for x in parents if x not in NAMES]
+
             total_weight = float(sum(parents.values()))
             for parent,weight in parents.items():
-                scaled_weight = weight/total_weight
-                edge = G.add_edge(parent,name,w=scaled_weight)
-                #print parent,name
+                if parent in NAMES:
+                    scaled_weight = weight/total_weight
+                    edge = G.add_edge(parent,name,w=scaled_weight)
+                    #print parent,name
 
     # Find singletons and remove them
     #print "Singleton names"
@@ -162,8 +163,12 @@ def build_graph(TAGS, dinner):
     # Serialze to json
     js = json_graph.node_link_data(G)
 
+
     for node in js["nodes"]:
-        name = node["name"]
+        try:
+            name = node["name"]
+        except:
+            name = node["id"]
         x,y = pos[name]
 
         # Flip the y coordinates
