@@ -1,11 +1,15 @@
 var f_graph = "input_graph.json";
 
-var width = 600,
-height = 300,
-r = 10,
-fill = d3.scale.category20();
+// size of the diagram
+var width = $(document).width();
+var height = 0.5*$(document).height();
+
+
+var r = 10;
+var fill = d3.scale.category20();
 
 var y_delta_space = 50;
+var charge = 250;
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width)
@@ -26,7 +30,7 @@ svg.append('svg:defs').append('svg:marker')
 var force = d3.layout.force()
     .gravity(.05)
     .distance(100)
-    .charge(-150)
+    .charge(-charge)
     .linkStrength(.01)
     .size([width, height])
     .on('tick',tick);
@@ -36,8 +40,7 @@ var path = {};
 
 d3.json(f_graph, function(error, json) {
     
-    title = document.getElementById("project_name");
-    title.innerHTML = json.project_name;
+    $("#project_name").text( json.project_name );
 
     force
         .nodes(json.nodes)
@@ -64,12 +67,13 @@ d3.json(f_graph, function(error, json) {
     node.on("mouseover", highlight_node);
     node.on("mouseout",  unhighlight_node);
     node.on("click", select_node);
-
-    console.log(json.links);
+    node.on("dblclick",delete_node);
 
     path = svg.append("svg:g").selectAll("path")
         .data(force.links())
         .enter().append("svg:path")
+        .attr("i", function(d) { return d.source.index; })
+        .attr("j", function(d) { return d.target.index; })
         .attr("source", function(d) { return d.source.name; })
         .attr("target", function(d) { return d.target.name; })
         .attr("class", "link")
@@ -96,16 +100,28 @@ function select_node(d) {
             .style("fill", c1);
     };
 
-
-
 }
 
+function delete_node(d) {
+    var x = d.index;
 
+    $(".link").each(function() { 
+        var i = this.getAttribute("i");
+        var j = this.getAttribute("j");
+        if(i==x || j==x) {
+            edge = d3.select(this);
+            edge.remove();
+        }
+    } );
+
+    var obj = d3.select(this);
+    obj.remove();
+    force.start();
+}
 
 function highlight_node(d) {
 
     $("text").attr("class", "faded");
-
     var obj = d3.select(this);
 
     // The class is used to remove the additional text later
@@ -117,8 +133,8 @@ function highlight_node(d) {
         .style("font-size", "30px")
         .text(d.name);
 
-    info_box = document.getElementById("project_text");
-    info_box.innerHTML = d.sample_text;
+    $("#project_text").html(d.sample_text);
+
 };
 
 function unhighlight_node(d) {
