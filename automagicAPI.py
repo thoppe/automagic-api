@@ -5,13 +5,6 @@ import requests_cache
 
 requests_cache.install_cache()
 
-f_API_json = "samples/jeo.api"
-url = "http://j-archive.com/showgame.php"
-payload = {"game_id":4860}
-
-with open(f_API_json) as FIN:
-    js = json.load(FIN)
-
 def depth_first(obj, path):
     if not obj:
         yield path
@@ -22,6 +15,13 @@ def depth_first(obj, path):
 
         for result in depth_first(obj[key],p2):
             yield result
+
+f_API_json = "samples/jeo.api"
+url = "http://j-archive.com/showgame.php"
+payload = {"game_id":4860}
+
+with open(f_API_json) as FIN:
+    js = json.load(FIN)
 
 end_points = [x for x in depth_first(js,[])]
 
