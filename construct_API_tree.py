@@ -90,13 +90,14 @@ def load_samples(HTML_SAMPLES):
 
     for x in ITR_attribute('class',dinner):
         for cx in x["class"]:
-            TAGS['class'][cx] += 1
+            if cx.strip():
+                TAGS['class'][cx] += 1
 
     #for x in ITR_attribute('id'):
     #    TAGS['id'][x["id"]] += 1
 
-    print "Tags"
-    pprint(dict(TAGS['class']))
+    #print "Tags"
+    #pprint(dict(TAGS['class']))
 
     ##################################################################
 
@@ -108,18 +109,26 @@ def load_samples(HTML_SAMPLES):
         if total == 1:
             print name, "possibly repeated text, dropping"
             TAGS['class'].pop(name)
-    
+
+    print "Tags"
+    pprint(dict(TAGS['class']))
+
     return TAGS, UNIQUE, dinner
 
 
 def build_graph(TAGS, dinner):
 
+    # Remove bad (empty) tags in the class
+    #bad_tags = [x for x in TAGS['class'] if not x.strip()]
+    #for name in bad_tags:
+    #    TAGS['class'].pop(name)
+    
     # Build a graph of the sibling parent relationship
     G = nx.DiGraph()
-    for tag in TAGS:
-        for name in TAGS[tag]:
-            G.add_node(name, name=name)
-
+    for name in TAGS["class"]:
+        G.add_node(name, name=name)
+        print name
+    exit()
     # Identify all the parents
     for tag in TAGS:
         for name in TAGS[tag]:
@@ -159,10 +168,11 @@ def build_graph(TAGS, dinner):
     pos = nx.graphviz_layout(G,prog='dot')
     px, py = zip(*pos.values())
 
-    # Serialze to json
+    # Serialize to json
     js = json_graph.node_link_data(G)
 
     for node in js["nodes"]:
+        print node
         name = node["name"]
         x,y = pos[name]
 
