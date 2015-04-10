@@ -2,55 +2,44 @@ import json
 import bs4
 import requests
 import requests_cache
-
 requests_cache.install_cache()
 
-def depth_first(obj, path):
-    if not obj:
-        yield path
-    
-    for key in obj:
-        p2 = list(path)
-        p2.append(key)
+import argparse
 
-        for result in depth_first(obj[key],p2):
-            yield result
+def load_API(f_API_json):
+    with open(f_API_json) as FIN:
+        js = json.load(FIN)
+    return js
 
-f_API_json = "samples/jeo.api"
+def dive(path, spoon):
+    data = {}
+
+    for key in path:
+        ITR  = spoon.findAll(attrs={"class":key})
+        if not path[key]:
+            result = [x.text for x in ITR]
+        else:
+            result = [dive(path[key],chunk) for chunk in ITR]
+        data[key] = result
+
+    return data
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("API", type=str, 
+                    default="output.api",
+                    help="API from build_API_from_tree.py")
+
+args = parser.parse_args()
+js = load_API(args.API)
+
 url = "http://j-archive.com/showgame.php"
 payload = {"game_id":4860}
 
-with open(f_API_json) as FIN:
-    js = json.load(FIN)
-
-end_points = [x for x in depth_first(js,[])]
-
 req  = requests.get(url,params=payload)
 soup = bs4.BeautifulSoup(req.content,'html5')
+data = dive(js, soup)
 
-def dive(path, spoon):
-    print "PATHING!",path,len(spoon)
-
-    if not path:
-        yield spoon
-
-    else:
-        for block in spoon.findAll(True,{"class":path}):
-            for result in dive(path[1:],block):
-                yield result
-       
-
-for path in end_points:
-    print path
-    for x in dive(path,soup):
-        print x
-    exit()
-exit()
-        
-
-for name in js:
-    block = soup.find(True,{"class":name})
-    print name, block.find(text=True,recursive=False)
-
-
+from pprint import pprint
+pprint(data)
 

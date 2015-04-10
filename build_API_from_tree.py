@@ -5,11 +5,24 @@ import json
 import bs4
 import ast, pprint
 import networkx as nx
+import argparse
 
-f_graph = "samples/output_graph.svg"
-f_output_json = "samples/jeo.api"
+parser = argparse.ArgumentParser()
+parser.add_argument("input", type=str, 
+                    default="samples/output_graph.svg",
+                    help="Output from select_API_tree.py")
 
-with codecs.open(f_graph,'r','utf-8') as FIN:
+parser.add_argument("output", type=str, 
+                    default="output.api",
+                    help="Output API file")
+
+parser.add_argument("show", default=False, action="store_true",
+                    help="Render to graph")
+
+args = parser.parse_args()
+
+
+with codecs.open(args.input,'r','utf-8') as FIN:
     raw = FIN.read()
     soup = bs4.BeautifulSoup(raw,'xml')
 
@@ -28,7 +41,7 @@ for g in soup.findAll(True):
         g.attrs.pop("marker-end")
 
 
-
+# Build the reduced graph
 G = nx.DiGraph()
 
 # Add the nodes
@@ -83,18 +96,5 @@ tree = ast.literal_eval(str(tree))
 jstr = json.dumps(tree,indent=2)
 print jstr
 
-with open(f_output_json,'w') as FOUT:
+with open(args.output,'w') as FOUT:
     FOUT.write(jstr)
-
-
-'''
-import pylab as plt
-
-pos = nx.graphviz_layout(G,prog='dot') #'dot'
-labels = nx.get_node_attributes(G,'name')
-
-nx.draw(G,pos,alpha=0.25,ew=0)
-nx.draw_networkx_labels(G,pos,labels,font_size=12)
-plt.show()
-'''
-

@@ -22,7 +22,11 @@ def count_hash(name,tag,dinner):
     C = collections.Counter()
     for soup in dinner:
         for cx in soup.findAll(True,{tag:name}):
-            text = cx.text.strip()
+            #try:
+            #    text = cx.html.find(text=True,recursive=False).strip()
+            #except:
+            #    text = None
+            
             C[cx] += 1
     return C
 
@@ -63,7 +67,11 @@ def find_example_text(name,tag,count=5,cutoff=100):
     samples = []
     for soup in dinner:
         for val in soup.findAll(True,{tag:name}):
-            text = val.text.strip()[:cutoff].strip()
+
+            text = [x.strip() for x in 
+                    val.findAll(text=True)]
+            text = '\n'.join(text).strip()[:cutoff]
+
             if text:
                 samples.append(text)
             if count == len(samples):
