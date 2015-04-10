@@ -1,6 +1,9 @@
 # Tmp files
 *~
 
+# Cache files
+cache.sqlite
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
