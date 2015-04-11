@@ -10,6 +10,9 @@ var fill = d3.scale.category20();
 var y_delta_space = 50;
 var charge = 250;
 
+var c1 = "#1f77b4";
+var c2 = "#ff7f0e";
+var c2 = "#EEB4B4";
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width)
@@ -52,14 +55,14 @@ d3.json(f_graph, function(error, json) {
 
     // Load the text into search_box
     var box = $("#search_box .list");
-    console.log(box);
 
     $(json.nodes).each(function() {
         name = this.name;
         text = this.sample_text;
         html = ("<li><h3 class='search_name'>"+name+"</h3>"+
-                "<p class='search_text'>"+text+"</p>");
-        box.append(html);
+                "<p class='search_text'>"+text+"</p></li>");
+        obj = $(html).on("click", select_search_text);
+        box.append(obj);
     });
 
     var options = {
@@ -77,12 +80,12 @@ d3.json(f_graph, function(error, json) {
         .enter().append("g")
         .attr("class", "node")
         .attr("selected",0)
+        .attr("id",function(d){return "node_"+d.name})
         .attr("name",function(d) {return d.name;})
         .call(force.drag);
 
-    c1 = "#1f77b4"
     node.append('circle')
-        .attr("r", radius - .75)
+        .attr("r", radius)
         .style("fill", function(d) { return c1; })
 
     node.append("text")
@@ -108,24 +111,38 @@ d3.json(f_graph, function(error, json) {
 
 function select_node(d) {
     var obj = d3.select(this);
-    var is_selected = obj.attr("selected");
-    
+    highlight_toggle(obj);
+
+    name = $(this).attr("name");
+    $(".search_name").each(function() {
+        if( $(this).text() == name ) {
+            $(this).parent().toggleClass("search_selected");            
+            console.log($(this).text());
+        }
+    });
+
+}
+
+function highlight_toggle(obj) {
+    var is_selected = obj.attr("selected");   
+
     if(is_selected=="0") {
         obj.attr("selected",1)
 
-        c1 = "#ff7f0e"
         obj.select("circle")
-            .style("fill", c1);
+            .style("fill", c2)
+            .style("stroke-width",3) 
+            .style("stroke","black") ;
     };
 
     if(is_selected=="1") {
         obj.attr("selected",0)
 
-        c1 = "#1f77b4"
         obj.select("circle")
-            .style("fill", c1);
+            .style("fill", c1)
+            .style("stroke-width",0);
+        
     };
-
 }
 
 function delete_node(d) {
@@ -167,7 +184,6 @@ function highlight_node(d) {
         item_name = item.values().search_name;
         return (item_name == d.name);
     }); 
-
     userList.filter();
     
 
@@ -202,12 +218,6 @@ function tick(e) {
         return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
     });
 
-/*
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-*/
     node.attr("transform", function(d) { 
         return "translate(" + d.x + "," + d.y + ")"; });
 
@@ -235,7 +245,6 @@ function save_as_svg() {
     //add xml declaration
     source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
 
-
     //convert svg source to URI data scheme.
     var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
 
@@ -254,5 +263,13 @@ function redraw() {
     vis.attr("transform",
              "translate(" + d3.event.translate + ")"
              + " scale(" + d3.event.scale + ")");
+    userList.search();    
+}
+
+function select_search_text() {
+    name = $(".search_name", this).text();
+    highlight_toggle(d3.select("#node_"+name));
+
+    $(this).toggleClass("search_selected");
 }
 

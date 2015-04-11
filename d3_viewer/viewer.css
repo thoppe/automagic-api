@@ -1,5 +1,6 @@
 body {
-    color: #111; 
+    color: #111;
+    background-color:#FAFAFA;
     font-family: 'Helvetica Neue', sans-serif; 
 }
 
@@ -10,7 +11,7 @@ path.link {
 }
 
 .node text {
-    fill: #000;
+    fill: #111
     pointer-events: none;
     font: 12px sans-serif;
 }
@@ -19,10 +20,8 @@ path.link {
     fill: #999;
 }
 
-#chart {
-
-}
-
+#chart { }
+/*
 input {
   border:solid 1px #ccc;
   border-radius: 5px;
@@ -33,9 +32,8 @@ input:focus {
   outline:none;
   border-color:#aaa;
 }
-
+*/
 .front { 
-    color: #111; 
     font-family: 'Helvetica Neue', sans-serif; 
     font-weight: bold; 
     letter-spacing: -1px; 
@@ -50,12 +48,28 @@ input:focus {
     margin-bottom:2%;
 }
 
+.list {
+    font-size:.9em;
+}
+
+.list h3 {
+    margin:0;
+}
+
+.list p {
+    margin:0;
+    margin-bottom:.5em;
+}
+
+.list .search_selected {
+    background-color:#EEB4B4;
+}
+
 .front button {
     text-align: right; 
     display:inline-block;
     vertical-align:middle;
 }
-
 
 
 hr {
