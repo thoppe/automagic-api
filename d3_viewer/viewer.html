@@ -9,6 +9,9 @@
     <script type="text/javascript" charset="utf-8" 
             src="jquery.min.js"></script>
 
+    <script type="text/javascript" charset="utf-8" 
+            src="list.min.js"></script>
+
     <link rel="stylesheet" 
           href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
@@ -22,6 +25,8 @@
 
   </head>
   <body>
+    <div id="search_box">
+
     <div class="front">
       <h1 id="project_name">Project name</h1>
 
@@ -36,16 +41,21 @@
         <i class="fa fa-chevron-circle-right"></i>
 			  Build API
       </button>
-
+      <input id="search_button", class="search" placeholder="Search" />
     </div>
 
-
     <div id="chart"></div>
+    
+    <!---
     <div id="project_text">
       Hover over an element to see info<br>
       Click to select a node<br>
       Double click to remove a node<br>
       Save when complete!<br>
+    </div>
+    --->
+    <hr>
+    <ul class="list"></ul>
     </div>
 
 

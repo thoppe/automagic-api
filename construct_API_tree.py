@@ -126,7 +126,7 @@ def build_graph(TAGS, dinner):
 
             total_weight = float(sum(parents.values()))
             for parent,weight in parents.items():
-                if parent in NAMES:
+                if parent in NAMES and parent != name:
                     scaled_weight = weight/total_weight
                     edge = G.add_edge(parent,name,w=scaled_weight)
                     #print parent,name
@@ -182,9 +182,9 @@ def build_graph(TAGS, dinner):
         #print name
         sx = find_example_text(name,'class')
         if sx:
-            node["sample_text"] = "\n<hr>\n".join(sx)
+            node["sample_text"] = sx
         else:
-            node["sample_text"] = ""
+            node["sample_text"] = [""]
 
         # Drop "id", it is the same as "name"
         node.pop("id")

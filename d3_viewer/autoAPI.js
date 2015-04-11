@@ -4,19 +4,25 @@ var f_graph = "input_graph.json";
 var width = $(document).width();
 var height = 0.5*$(document).height();
 
-
-var r = 10;
+var radius = 10;
 var fill = d3.scale.category20();
 
 var y_delta_space = 50;
 var charge = 250;
 
+
 var svg = d3.select("#chart").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .call(d3.behavior.zoom().on("zoom", redraw))
+    .on("dblclick.zoom", null);
+
+
+var vis = svg
+    .append('svg:g');
 
 // define arrow markers for graph links
-svg.append('svg:defs').append('svg:marker')
+vis.append('svg:defs').append('svg:marker')
     .attr('id', 'end-arrow')
     .attr('viewBox', '0 -5 10 10')
     .attr('refX', 6)
@@ -35,12 +41,32 @@ var force = d3.layout.force()
     .size([width, height])
     .on('tick',tick);
 
-var node = svg.selectAll(".node");
+var node = vis.selectAll(".node");
 var path = {};
+
+var userList;
 
 d3.json(f_graph, function(error, json) {
     
     $("#project_name").text( json.project_name );
+
+    // Load the text into search_box
+    var box = $("#search_box .list");
+    console.log(box);
+
+    $(json.nodes).each(function() {
+        name = this.name;
+        text = this.sample_text;
+        html = ("<li><h3 class='search_name'>"+name+"</h3>"+
+                "<p class='search_text'>"+text+"</p>");
+        box.append(html);
+    });
+
+    var options = {
+        valueNames: [ 'search_name', 'search_text' ]
+    };
+    userList = new List('search_box', options);
+
 
     force
         .nodes(json.nodes)
@@ -56,7 +82,7 @@ d3.json(f_graph, function(error, json) {
 
     c1 = "#1f77b4"
     node.append('circle')
-        .attr("r", r - .75)
+        .attr("r", radius - .75)
         .style("fill", function(d) { return c1; })
 
     node.append("text")
@@ -69,7 +95,7 @@ d3.json(f_graph, function(error, json) {
     node.on("click", select_node);
     node.on("dblclick",delete_node);
 
-    path = svg.append("svg:g").selectAll("path")
+    path = vis.append("svg:g").selectAll("path")
         .data(force.links())
         .enter().append("svg:path")
         .attr("i", function(d) { return d.source.index; })
@@ -133,7 +159,18 @@ function highlight_node(d) {
         .style("font-size", "30px")
         .text(d.name);
 
-    $("#project_text").html(d.sample_text);
+    //$("#project_text").html(d.sample_text);
+    $("#search_button").val(d.name);
+    userList.search(d.name);
+    
+    userList.filter(function(item) {
+        item_name = item.values().search_name;
+        return (item_name == d.name);
+    }); 
+
+    userList.filter();
+    
+
 
 };
 
@@ -210,3 +247,12 @@ function save_as_svg() {
     console.log(source);
 
 };
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+function redraw() {
+    vis.attr("transform",
+             "translate(" + d3.event.translate + ")"
+             + " scale(" + d3.event.scale + ")");
+}
+

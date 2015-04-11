@@ -20,7 +20,18 @@ path.link {
 }
 
 #chart {
-    display:block;
+
+}
+
+input {
+  border:solid 1px #ccc;
+  border-radius: 5px;
+  padding:7px 14px;
+  margin-bottom:10px
+}
+input:focus {
+  outline:none;
+  border-color:#aaa;
 }
 
 .front { 
@@ -35,6 +46,8 @@ path.link {
     text-align: left; 
     font-size: 65px; 
     display:block;
+    margin-top:2%;
+    margin-bottom:2%;
 }
 
 .front button {
