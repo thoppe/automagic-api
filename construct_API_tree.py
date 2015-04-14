@@ -58,7 +58,7 @@ def find_named_parents(name,tag,dinner):
                 result[parent_name] += 1
     return result
 
-def find_example_text(name,tag,count=5,cutoff=100):
+def find_example_text(name,tag,count=10*3,cutoff=100):
     samples = []
     for soup in dinner:
         for val in soup.findAll(True,{tag:name}):

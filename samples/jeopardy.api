@@ -1,18 +1,18 @@
 {
   "final_round": {
+    "category": {
+      "category_name": {}
+    }, 
     "clue": {
-      "clue_text": {}, 
-      "clue_header": {
-        "clue_value": {}
-      }
+      "clue_text": {}
     }
   }, 
   "round": {
+    "category": {
+      "category_name": {}
+    }, 
     "clue": {
-      "clue_text": {}, 
-      "clue_header": {
-        "clue_value": {}
-      }
+      "clue_text": {}
     }
   }
 }

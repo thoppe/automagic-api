@@ -98,3 +98,5 @@ print jstr
 
 with open(args.output,'w') as FOUT:
     FOUT.write(jstr)
+
+print "Saved to", args.output
