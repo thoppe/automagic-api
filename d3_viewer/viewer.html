@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Automagic API builder</title>
+
+    <script type="text/javascript" charset="utf-8" 
+            src="d3.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" 
+            src="jquery.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" 
+            src="list.min.js"></script>
+
+    <link rel="stylesheet" 
+          href="../css/font-awesome-4.3.0/css/font-awesome.css">
+
+
+    <link rel="stylesheet" 
+          href="buttons.css">
+
+    <link type="text/css" rel="stylesheet" href="viewer.css"/>
+
+    <style type="text/css"></style>
+
+  </head>
+  <body>
+    <div id="search_box">
+
+    <div class="front">
+      <h1 id="project_name">Project name</h1>
+
+      <button class="pure-button"
+              onclick="window.location.reload()">
+        <i class="fa fa-minus-square"></i>
+			  Reset
+      </button>
+
+      <button class="pure-button"
+              onclick="save_as_svg()" id="save_as_svg">
+        <i class="fa fa-chevron-circle-right"></i>
+			  Build API
+      </button>
+      <input id="search_button", class="search" placeholder="Search" />
+    </div>
+
+    <div id="chart"></div>
+    
+    <!---
+    <div id="project_text">
+      Hover over an element to see info<br>
+      Click to select a node<br>
+      Double click to remove a node<br>
+      Save when complete!<br>
+    </div>
+    --->
+    <hr>
+    <ul class="list"></ul>
+    </div>
+
+
+    <script type="text/javascript" src="autoAPI.js"></script>
+  </body>
+</html>
